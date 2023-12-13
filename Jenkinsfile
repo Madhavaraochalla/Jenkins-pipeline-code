@@ -1,4 +1,4 @@
-pipeline
+iiipipeline
 {
     agent any
     stages
@@ -7,7 +7,7 @@ pipeline
         {
             steps
             {
-                git 'https://github.com/intelliqittrainings/maven.git'
+               git 'https://github.com/intelliqittrainings/maven.git'
             }
         }
         stage('ContinuousBuild')
