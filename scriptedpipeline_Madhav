@@ -1,0 +1,28 @@
+node('built-in')
+{
+   stage('ContionusDownload')
+   {
+     git 'https://github.com/Madhavaraochalla/Maven.git'
+   }
+   
+    stage('ContionusBuild')
+    {
+        sh 'mvn package'
+    }
+    stage ('ContinousDeployment')
+     {
+       deploy adapters: [tomcat9(credentialsId: '0fd54dbb-706f-4ddc-b969-d046bd1a486b', path: '', url: 'http://172.31.4.118:8080')], contextPath: 'testapp', war: '**/*.war'
+     }
+     stage('continoustesting')
+     {
+         git 'https://github.com/Madhavaraochalla/Testing-code.git'
+         sh 'java -jar /var/lib/jenkins/workspace/scriptedpipeline1/testing.jar'
+         
+     }
+     stage('ContinoiusDelivary')
+     {
+       input message: 'Madhav ni adugu', submitter: 'maha'
+     deploy adapters: [tomcat9(credentialsId: '0fd54dbb-706f-4ddc-b969-d046bd1a486b', path: '', url: 'http://172.31.14.137:8080')], contextPath: 'proadapp', war: '**/*.war'
+     }
+    
+}
