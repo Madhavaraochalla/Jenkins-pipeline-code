@@ -1,0 +1,93 @@
+pipeline
+ {
+     agent any
+     stages
+     {
+         stage('ContinuousDownload')
+         {
+             steps
+             {
+                 script
+                 {
+                     try
+                    {
+                       git 'https://github.com/Madhavaraochalla/Maven.git'
+                    }
+                   catch(Exception e1)
+                    {
+                      mail bcc: '', body: 'Jenkins is unable to download from the remote github', cc: '', from: '', replyTo: '', subject: 'cicd failed', to: 'madhav.devops2000@gmail.com'
+                    }
+                 }
+             }
+         }
+         stage('continousbiuld')
+         {
+             steps
+             {
+                 script
+                 {
+                     try
+                     {
+                         sh 'mvn package'
+                     }
+                    catch(Exception e1)
+                     {
+                         mail bcc: '', body: 'Jenkins is unable to build code', cc: '', from: '', replyTo: '', subject: 'continous build failed ', to: 'madhav.devops2000@gmail.com'
+                     }
+                 }
+             }
+         }
+         stage('continousDeployment')
+         {
+             steps
+             {
+                 script
+                 {
+                     try
+                     {
+                         deploy adapters: [tomcat9(credentialsId: '0fd54dbb-706f-4ddc-b969-d046bd1a486b', path: '', url: 'http://172.31.4.118:8080')], contextPath: 'testapp', war: '**/*.war'
+                     }
+                     catch(Exception e1)
+                     {
+                         mail bcc: '', body: 'Jenkins unable to deploy code in to Qa server', cc: '', from: '', replyTo: '', subject: 'deployment was failed ', to: 'madhav.devops2000@gmail.com'
+                     }
+                 }
+             }
+         }
+         stage('continoustesting')
+         {
+             steps
+             {
+                 script
+                 {
+                     try
+                     {
+                         sh 'java -jar/var/lib/jenkins/workspace/Declerativepipelin/testing.jar'
+                         git 'https://github.com/Madhavaraochalla/Testing-code.git'
+                     }
+                     catch(Exception e1)
+                     {
+                       mail bcc: '', body: 'Selenium scripts are showing a failure status', cc: '', from: '', replyTo: '', subject: 'Tasting was failed ', to: 'madhav.devops2000@gmail.com'
+                     }
+                 }
+             }
+         }
+         stage('continousDelivary')
+         {
+             steps
+             {
+                 script
+                 {
+                     try
+                     {
+                         mail bcc: '', body: 'Jenkins is unable to deploy into tomcat on the prodservers', cc: '', from: '', replyTo: '', subject: 'delivary was failed ', to: 'madhav.devops2000@gmail.com'
+                     }
+                     catch(Exception e1)
+                     {
+                       mail bcc: '', body: 'Jenkins is unable to deploy into tomcat on the prodservers', cc: '', from: '', replyTo: '', subject: 'delivary was failed ', to: 'madhav.devops2000@gmail.com'
+                     }
+                 }
+             }
+         }
+     }
+ }
