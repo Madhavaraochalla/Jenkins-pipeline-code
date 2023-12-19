@@ -1,0 +1,58 @@
+node('built in')
+{
+    stage('continousDownload')
+    {
+        try
+        {
+           git 'https://github.com/Madhavaraochalla/Maven.git' 
+        }
+        catch(Exception e1)
+        {
+           mail bcc: '', body: 'jenkins unable to download code from git repository', cc: '', from: '', replyTo: '', subject: 'download failed', to: 'madhav.devops2000@gmail.com' 
+        }
+    }
+    stage('continousbuild')
+    {
+        try
+        {
+            sh 'mvn package'
+        }
+        catch(Exception e1)
+        {
+           mail bcc: '', body: 'jenkins unable to create artifact', cc: '', from: '', replyTo: '', subject: 'Build failed', to: 'madhav.devops2000@gmail.com' 
+        }
+    }
+    stage('continousDeployment')
+    {
+        try
+        {
+            deploy adapters: [tomcat9(credentialsId: '0fd54dbb-706f-4ddc-b969-d046bd1a486b', path: '', url: 'http[://172.31.4.118:8080')], contextPath: 'testapp', war: '**/*.war'
+        }
+        catch(Exception e1)
+        {
+         mail bcc: '', body: 'jenkins unable to Deploy code in to Qa server', cc: '', from: '', replyTo: '', subject: 'Deployment failed', to: 'madhav.devops2000@gmail.com'   
+        }
+    }
+    stage('continoustesting')
+    {
+        try
+        {
+            git 'https://github.com/Madhavaraochalla/Testing-code.git'
+        }
+         catch(Exception e1)
+         {
+             mail bcc: '', body: 'Selenium scripts are showing a failure status', cc: '', from: '', replyTo: '', subject: 'Testing failed', to: 'madhav.devops2000@gmail.com'
+         }
+    }
+    stage('continousDelivary')
+    {
+        try
+        {
+           deploy adapters: [tomcat9(credentialsId: '0fd54dbb-706f-4ddc-b969-d046bd1a486b', path: '', url: 'http[://172.31.14.137:8080')], contextPath: 'prodapp', war: '**/*.war' 
+        }
+        catch(Exception e1)
+        {
+            mail bcc: '', body: 'jenkins unable to deploy  code in prod server', cc: '', from: '', replyTo: '', subject: 'Delivary failed', to: 'madhav.devops2000@gmail.com'
+        }
+    }
+}
