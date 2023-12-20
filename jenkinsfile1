@@ -15,7 +15,7 @@ pipeline
                     }
                    catch(Exception e1)
                     {
-                 {
+                 
                      try
                      {
                          sh 'mvn package'
@@ -24,10 +24,8 @@ pipeline
                      {
                          mail bcc: '', body: 'Jenkins is unable to build code', cc: '', from: '', replyTo: '', subject: 'continous build failed ', to: 'madhav.devops2000@gmail.com'
                      }
-                 }
-             }
+                  }
+               }
+           }
          }
-	}
-	}
-	}
-	}
+  }
